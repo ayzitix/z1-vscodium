@@ -1,0 +1,41 @@
+diff --git a/src/vs/platform/agentHost/common/agentHostSchema.ts b/src/vs/platform/agentHost/common/agentHostSchema.ts
+index 49010c63..fb74b12d 100644
+--- a/src/vs/platform/agentHost/common/agentHostSchema.ts
++++ b/src/vs/platform/agentHost/common/agentHostSchema.ts
+@@ -871,20 +871,20 @@ export const platformRootSchema = createSchema({
+ 		type: 'boolean',
+ 		title: localize('agentHost.config.disableRepoInfoTelemetry.title', "Disable Repository Information Telemetry"),
+ 		description: localize('agentHost.config.disableRepoInfoTelemetry.description', "Whether repository information telemetry is disabled for Agent Host sessions."),
+-		default: false,
++		default: true,
+ 	}),
+ 	[AgentHostTelemetryLevelConfigKey]: schemaProperty<TelemetryConfiguration>({
+ 		type: 'string',
+ 		title: localize('agentHost.config.telemetryLevel.title', "Telemetry Level"),
+ 		description: localize('agentHost.config.telemetryLevel.description', "Most restrictive telemetry level requested by connected clients."),
+ 		enum: [TelemetryConfiguration.ON, TelemetryConfiguration.ERROR, TelemetryConfiguration.CRASH, TelemetryConfiguration.OFF],
+-		default: TelemetryConfiguration.ON,
++		default: TelemetryConfiguration.OFF,
+ 	}),
+ 	[AgentHostEditTelemetryEnabledConfigKey]: schemaProperty<boolean>({
+ 		type: 'boolean',
+ 		title: localize('agentHost.config.editTelemetryEnabled.title', "Edit Telemetry"),
+ 		description: localize('agentHost.config.editTelemetryEnabled.description', "Whether edit attribution telemetry is enabled for Agent Host sessions."),
+-		default: true,
++		default: false,
+ 	}),
+ 	[AgentHostSessionSyncEnabledConfigKey]: schemaProperty<boolean>({
+ 		type: 'boolean',
+diff --git a/src/vs/platform/telemetry/common/telemetryUtils.ts b/src/vs/platform/telemetry/common/telemetryUtils.ts
+index 15377a80..d8b55784 100644
+--- a/src/vs/platform/telemetry/common/telemetryUtils.ts
++++ b/src/vs/platform/telemetry/common/telemetryUtils.ts
+@@ -146,7 +146,7 @@ export function getTelemetryLevel(configurationService: IConfigurationService):
+ 	}
+ 
+ 	// Maps new telemetry setting to a telemetry level
+-	switch (newConfig === undefined ? TelemetryConfiguration.ON : newConfig) {
++	switch (newConfig === undefined ? TelemetryConfiguration.OFF : newConfig) {
+ 		case TelemetryConfiguration.ON:
+ 			return TelemetryLevel.USAGE;
+ 		case TelemetryConfiguration.ERROR:

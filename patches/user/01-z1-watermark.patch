@@ -1,0 +1,210 @@
+diff --git a/src/vs/workbench/browser/parts/editor/editorGroupWatermark.ts b/src/vs/workbench/browser/parts/editor/editorGroupWatermark.ts
+index a63f37ce..3635e308 100644
+--- a/src/vs/workbench/browser/parts/editor/editorGroupWatermark.ts
++++ b/src/vs/workbench/browser/parts/editor/editorGroupWatermark.ts
+@@ -19,6 +19,7 @@ import { IKeybindingService } from '../../../../platform/keybinding/common/keybi
+ import { IStorageService, StorageScope, StorageTarget, WillSaveStateReason } from '../../../../platform/storage/common/storage.js';
+ import { defaultKeybindingLabelStyles } from '../../../../platform/theme/browser/defaultStyles.js';
+ import { IWorkspaceContextService, WorkbenchState } from '../../../../platform/workspace/common/workspace.js';
++import { Z1Watermark } from './z1Watermark.js';
+ 
+ interface WatermarkEntry {
+ 	readonly id: string;
+@@ -102,7 +103,7 @@ export class EditorGroupWatermark extends Disposable {
+ 			h('.editor-group-watermark-toolbar-container@toolbarContainer'),
+ 			h('.editor-group-watermark', [
+ 				h('.watermark-container', [
+-					h('.letterpress'),
++					h('.letterpress@letterpress'),
+ 					h('.shortcuts@shortcuts'),
+ 				])
+ 			])
+@@ -112,6 +113,9 @@ export class EditorGroupWatermark extends Disposable {
+ 		this.shortcuts = elements.shortcuts;
+ 		this.toolbarContainer = elements.toolbarContainer;
+ 
++		const logo = this._register(new Z1Watermark());
++		append(elements.letterpress, logo.element);
++
+ 		this._register(this.instantiationService.createInstance(MenuWorkbenchToolBar, this.toolbarContainer, MenuId.EditorGroupWatermarkToolbar, {
+ 			hiddenItemStrategy: HiddenItemStrategy.NoHide,
+ 			highlightToggledItems: true,
+diff --git a/src/vs/workbench/browser/parts/editor/media/editorgroupview.css b/src/vs/workbench/browser/parts/editor/media/editorgroupview.css
+index cfe47f50..2d7e9e7b 100644
+--- a/src/vs/workbench/browser/parts/editor/media/editorgroupview.css
++++ b/src/vs/workbench/browser/parts/editor/media/editorgroupview.css
+@@ -130,23 +130,39 @@
+ 	width: 100%;
+ 	max-height: 100%;
+ 	aspect-ratio: 1/1;
+-	background-image: url('./letterpress-light.svg');
+-	background-size: contain;
+-	background-position-x: center;
+-	background-repeat: no-repeat;
+-	max-width: 256px;
++	max-width: 128px;
+ }
+ 
+-.monaco-workbench.vs-dark .part.editor > .content .editor-group-container .editor-group-watermark .letterpress {
+-	background-image: url('./letterpress-dark.svg');
++.monaco-workbench .part.editor > .content .editor-group-container > .editor-group-watermark-wrapper .editor-group-watermark .letterpress .z1-watermark,
++.monaco-workbench .part.editor > .content .editor-group-container > .editor-group-watermark-wrapper .editor-group-watermark .letterpress .z1-watermark svg {
++	display: block;
++	width: 100%;
++	height: 100%;
++}
++
++.z1-watermark-body {
++	fill: var(--vscode-editor-foreground);
++	opacity: 0.18;
++	transform-box: fill-box;
++	transform-origin: center;
++	animation: z1-watermark-rotate 32s linear infinite;
++}
++
++.z1-watermark-eye {
++	fill: var(--vscode-editor-background);
++}
++
++@keyframes z1-watermark-rotate {
++	from { transform: rotate(0deg); }
++	to { transform: rotate(360deg); }
+ }
+ 
+-.monaco-workbench.hc-light .part.editor > .content .editor-group-container .editor-group-watermark .letterpress {
+-	background-image: url('./letterpress-hcLight.svg');
++.monaco-workbench.monaco-reduce-motion .z1-watermark-body {
++	animation: none;
+ }
+ 
+-.monaco-workbench.hc-black .part.editor > .content .editor-group-container .editor-group-watermark .letterpress {
+-	background-image: url('./letterpress-hcDark.svg');
++@media (prefers-reduced-motion: reduce) {
++	.z1-watermark-body { animation: none; }
+ }
+ 
+ .monaco-workbench .part.editor > .content .editor-group-container > .editor-group-watermark-wrapper .editor-group-watermark .shortcuts {
+diff --git a/src/vs/workbench/browser/parts/editor/z1Watermark.ts b/src/vs/workbench/browser/parts/editor/z1Watermark.ts
+new file mode 100644
+index 00000000..9bfcccc0
+--- /dev/null
++++ b/src/vs/workbench/browser/parts/editor/z1Watermark.ts
+@@ -0,0 +1,118 @@
++/*---------------------------------------------------------------------------------------------
++ *  Copyright (c) z1. All rights reserved.
++ *  Licensed under the MIT License. See License.txt in the project root for license information.
++ *--------------------------------------------------------------------------------------------*/
++
++import { Disposable } from '../../../../base/common/lifecycle.js';
++
++const BODY_PATH = 'M110.94 33.4257C133.425 14.1838 166.575 14.1838 189.06 33.4257V33.4257C196.987 40.2087 206.543 44.8107 216.788 46.7786V46.7786C245.851 52.3614 266.52 78.2786 265.495 107.856V107.856C265.134 118.282 267.494 128.622 272.343 137.859V137.859C286.099 164.063 278.723 196.381 254.96 214.021V214.021C246.583 220.239 239.97 228.532 235.772 238.082V238.082C223.862 265.175 193.995 279.558 165.388 271.977V271.977C155.303 269.305 144.697 269.305 134.612 271.977V271.977C106.005 279.558 76.1383 265.175 64.2283 238.082V238.082C60.0299 228.532 53.4169 220.239 45.0402 214.021V214.021C21.2772 196.381 13.9008 164.063 27.6568 137.859V137.859C32.5059 128.622 34.8661 118.282 34.5049 107.856V107.856C33.4805 78.2786 54.1488 52.3614 83.2122 46.7786V46.7786C93.4574 44.8107 103.013 40.2087 110.94 33.4257V33.4257Z';
++
++const EYES = [
++	{ cx: 202.837, cy: 113.514, rx: 31.5, ry: 42, rotation: -9.24205 },
++	{ cx: 121.657, cy: 123.393, rx: 31.5, ry: 42, rotation: -8.95985 },
++];
++
++const SVG_NS = 'http://www.w3.org/2000/svg';
++const MAX_EYE_OFFSET = 18;
++
++/**
++ * The z1 empty-editor watermark: the body rotates on its own, the eyes
++ * follow the mouse cursor.
++ */
++export class Z1Watermark extends Disposable {
++
++	readonly element: HTMLElement;
++
++	private readonly svg: SVGSVGElement;
++	private readonly eyeGroups: SVGGElement[] = [];
++
++	private mouseX = -1;
++	private mouseY = -1;
++	private frame: number | undefined;
++
++	constructor() {
++		super();
++
++		this.element = document.createElement('div');
++		this.element.className = 'z1-watermark';
++
++		this.svg = document.createElementNS(SVG_NS, 'svg');
++		this.svg.setAttribute('viewBox', '0 0 300 300');
++		this.svg.setAttribute('aria-hidden', 'true');
++		this.svg.setAttribute('focusable', 'false');
++
++		const body = document.createElementNS(SVG_NS, 'path');
++		body.setAttribute('d', BODY_PATH);
++		body.setAttribute('class', 'z1-watermark-body');
++		this.svg.appendChild(body);
++
++		for (const eye of EYES) {
++			const group = document.createElementNS(SVG_NS, 'g');
++			group.setAttribute('class', 'z1-watermark-eye');
++
++			const ellipse = document.createElementNS(SVG_NS, 'ellipse');
++			ellipse.setAttribute('cx', String(eye.cx));
++			ellipse.setAttribute('cy', String(eye.cy));
++			ellipse.setAttribute('rx', String(eye.rx));
++			ellipse.setAttribute('ry', String(eye.ry));
++			ellipse.setAttribute('transform', `rotate(${eye.rotation} ${eye.cx} ${eye.cy})`);
++
++			group.appendChild(ellipse);
++			this.svg.appendChild(group);
++			this.eyeGroups.push(group);
++		}
++
++		this.element.appendChild(this.svg);
++
++		const onMouseMove = (event: MouseEvent) => {
++			this.mouseX = event.clientX;
++			this.mouseY = event.clientY;
++
++			if (this.frame === undefined) {
++				this.frame = requestAnimationFrame(() => {
++					this.frame = undefined;
++					this.updateEyes();
++				});
++			}
++		};
++
++		window.addEventListener('mousemove', onMouseMove, { passive: true });
++		this._register({ dispose: () => window.removeEventListener('mousemove', onMouseMove) });
++		this._register({ dispose: () => {
++			if (this.frame !== undefined) {
++				cancelAnimationFrame(this.frame);
++				this.frame = undefined;
++			}
++		} });
++	}
++
++	private updateEyes(): void {
++		if (this.mouseX < 0 || this.mouseY < 0) {
++			return;
++		}
++
++		const rect = this.svg.getBoundingClientRect();
++		if (!rect.width || !rect.height) {
++			return; // watermark not visible
++		}
++
++		const centerX = rect.left + rect.width / 2;
++		const centerY = rect.top + rect.height / 2;
++		const dx = this.mouseX - centerX;
++		const dy = this.mouseY - centerY;
++		const distance = Math.sqrt(dx * dx + dy * dy);
++
++		let offsetX = 0;
++		let offsetY = 0;
++		if (distance > 1) {
++			const strength = Math.min(distance / 240, 1);
++			offsetX = (dx / distance) * MAX_EYE_OFFSET * strength;
++			offsetY = (dy / distance) * MAX_EYE_OFFSET * strength;
++		}
++
++		const transform = `translate(${offsetX.toFixed(2)} ${offsetY.toFixed(2)})`;
++		for (const group of this.eyeGroups) {
++			group.setAttribute('transform', transform);
++		}
++	}
++}
