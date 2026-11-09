@@ -43,8 +43,9 @@ Everything user-visible is `z1`:
 - executable and launcher names (`z1`, `bin/z1`)
 - data directory (`~/.config/z1`)
 - welcome page: `z1`, `Get started with z1`, `z1 Announcements`
-- empty-editor watermark: the z1 body slowly rotates (32s) and the eyes follow
-  the mouse cursor (inline SVG, `z1Watermark.ts`), rendered at 128px
+- empty-editor watermark: the z1 body slowly rotates (32s), the eyes follow
+  the mouse cursor (inline SVG, `z1Watermark.ts`),
+  rendered at 128px
 - app/window icon is the z1 mark (white blob with two dark eyes)
 - title bar and Welcome tab mark is the z1 mark (white, `code-icon.svg`)
 - default theme **z1 Default**: Cursor Dark palette with all blue accents
@@ -110,7 +111,7 @@ is cached, and reload.
 ./verify-clean.sh
 ```
 
-Current result: `passed: 24 failed: 0`, including:
+Current result: `passed: 25 failed: 0`, including:
 
 - `name = z1`, `applicationName = z1`, `linuxIconName = z1`
 - Open VSX gallery, no Microsoft update URL, no `aiKey`
@@ -118,6 +119,7 @@ Current result: `passed: 24 failed: 0`, including:
 - title bar / tab mark matches `branding/z1-mark-white.svg`
 - animated watermark CSS (body rotation) and eye-tracking script are present
 - strict 90-degree UI corners (`border-radius: 0`)
+- empty-editor shortcut hints are hidden
 - `z1 Default`, `z1 Soft`, `z1 Dark` are valid and registered
 - `z1 Default` has white accents and is the built-in default dark theme
 - no Cursor brand strings in the themes or user extensions

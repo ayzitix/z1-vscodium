@@ -72,6 +72,11 @@ if grep -q 'z1: strict 90-degree corners' "${APP}/resources/app/out/vs/workbench
 else
   bad 'square UI CSS is missing'
 fi
+if grep -q 'z1: hide empty-editor shortcut hints' "${APP}/resources/app/out/vs/workbench/workbench.desktop.main.css"; then
+  ok 'empty-editor shortcut hints hidden'
+else
+  bad 'empty-editor shortcut hints are still visible'
+fi
 if cmp -s "${BRAND}/z1-mark-white.svg" "${APP}/resources/app/out/vs/workbench/browser/media/code-icon.svg"; then
   ok 'title bar / tab mark = z1'
 else

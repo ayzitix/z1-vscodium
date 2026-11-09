@@ -107,6 +107,20 @@ CSS
 append_square_ui "${RES}/out/vs/workbench/workbench.desktop.main.css"
 append_square_ui "${RES}/out/vs/sessions/sessions.desktop.main.css"
 
+# hide the shortcut hints on the empty-editor watermark
+append_no_watermark_hints() {
+  local f="$1"
+  [[ -f "${f}" ]] || return 0
+  grep -q 'z1: hide empty-editor shortcut hints' "${f}" && return 0
+  cat >> "${f}" <<'CSS'
+
+/* z1: hide empty-editor shortcut hints */
+.editor-group-watermark .shortcuts { display: none !important; }
+CSS
+}
+append_no_watermark_hints "${RES}/out/vs/workbench/workbench.desktop.main.css"
+append_no_watermark_hints "${RES}/out/vs/sessions/sessions.desktop.main.css"
+
 # z1 colour themes inside the built-in theme-defaults extension
 THEME_DIR="${RES}/extensions/theme-defaults"
 if [[ -d "${THEME_DIR}" ]]; then
