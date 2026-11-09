@@ -83,6 +83,11 @@ if grep -q 'z1-welcome-page' "${APP}/resources/app/out/vs/workbench/workbench.de
 else
   bad 'z1 welcome screen is missing'
 fi
+if ! grep -q 'workbench.action.activityBarLocation' "${APP}/resources/app/out/vs/workbench/workbench.desktop.main.js"; then
+  ok 'Activity Bar position switching removed'
+else
+  bad 'Activity Bar position switching is still present'
+fi
 if cmp -s "${BRAND}/z1-mark-white.svg" "${APP}/resources/app/out/vs/workbench/browser/media/code-icon.svg"; then
   ok 'title bar / tab mark = z1'
 else

@@ -45,6 +45,8 @@ Everything user-visible is `z1`:
 - welcome page: `z1`, `Get started with z1`, `z1 Announcements`
 - Cursor-style Welcome screen: z1 brand line and a 2×2 card grid
   (Open project, Clone repo, Connect via SSH, About z1)
+- Activity Bar is fixed to **top**; the position switcher (menu, command
+  palette and setting) is removed
 - empty-editor watermark: the z1 body slowly rotates (32s), the eyes follow
   the mouse cursor (inline SVG, `z1Watermark.ts`),
   rendered at 128px
@@ -113,7 +115,7 @@ is cached, and reload.
 ./verify-clean.sh
 ```
 
-Current result: `passed: 26 failed: 0`, including:
+Current result: `passed: 27 failed: 0`, including:
 
 - `name = z1`, `applicationName = z1`, `linuxIconName = z1`
 - Open VSX gallery, no Microsoft update URL, no `aiKey`
@@ -123,6 +125,7 @@ Current result: `passed: 26 failed: 0`, including:
 - strict 90-degree UI corners (`border-radius: 0`)
 - empty-editor shortcut hints are hidden
 - Cursor-style z1 welcome screen is present
+- Activity Bar position switching removed
 - `z1 Default`, `z1 Soft`, `z1 Dark` are valid and registered
 - `z1 Default` has white accents and is the built-in default dark theme
 - no Cursor brand strings in the themes or user extensions
