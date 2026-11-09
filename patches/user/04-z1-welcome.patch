@@ -74,7 +74,7 @@
  	private async buildCategoriesSlide(preserveFocus?: boolean) {
 --- a/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
 +++ b/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
-@@ -1159,3 +1159,113 @@
+@@ -1159,3 +1159,140 @@
  	border-color: var(--vscode-checkbox-border) !important;
  }
  
@@ -98,23 +98,50 @@
 +.z1-welcome-inner {
 +	width: 540px;
 +	max-width: 100%;
++	transform: translateY(-16px);
 +}
 +
 +.z1-welcome-brand {
 +	display: flex;
 +	align-items: center;
 +	gap: 10px;
-+	margin-bottom: 28px;
++	margin-bottom: 20px;
 +}
 +
 +.z1-welcome-logo {
++	position: relative;
 +	width: 34px;
 +	height: 34px;
 +	flex: 0 0 auto;
-+	background-image: url('../../../../browser/media/code-icon.svg');
++}
++
++.z1-welcome-logo::before,
++.z1-welcome-logo::after {
++	content: '';
++	position: absolute;
++	inset: 0;
 +	background-size: contain;
 +	background-repeat: no-repeat;
 +	background-position: center;
++}
++
++.z1-welcome-logo::before {
++	background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20300%20300%22%3E%3Cpath%20d%3D%22M110.94%2033.4257C133.425%2014.1838%20166.575%2014.1838%20189.06%2033.4257V33.4257C196.987%2040.2087%20206.543%2044.8107%20216.788%2046.7786V46.7786C245.851%2052.3614%20266.52%2078.2786%20265.495%20107.856V107.856C265.134%20118.282%20267.494%20128.622%20272.343%20137.859V137.859C286.099%20164.063%20278.723%20196.381%20254.96%20214.021V214.021C246.583%20220.239%20239.97%20228.532%20235.772%20238.082V238.082C223.862%20265.175%20193.995%20279.558%20165.388%20271.977V271.977C155.303%20269.305%20144.697%20269.305%20134.612%20271.977V271.977C106.005%20279.558%2076.1383%20265.175%2064.2283%20238.082V238.082C60.0299%20228.532%2053.4169%20220.239%2045.0402%20214.021V214.021C21.2772%20196.381%2013.9008%20164.063%2027.6568%20137.859V137.859C32.5059%20128.622%2034.8661%20118.282%2034.5049%20107.856V107.856C33.4805%2078.2786%2054.1488%2052.3614%2083.2122%2046.7786V46.7786C93.4574%2044.8107%20103.013%2040.2087%20110.94%2033.4257V33.4257Z%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E");
++	animation: z1-welcome-logo-rotate 32s linear infinite;
++	transform-origin: center;
++}
++
++.z1-welcome-logo::after {
++	background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20300%20300%22%3E%3Cellipse%20cx%3D%22202.837%22%20cy%3D%22113.514%22%20rx%3D%2231.5%22%20ry%3D%2242%22%20transform%3D%22rotate%28-9.24205%20202.837%20113.514%29%22%20fill%3D%22%232A2A2A%22%2F%3E%3Cellipse%20cx%3D%22121.657%22%20cy%3D%22123.393%22%20rx%3D%2231.5%22%20ry%3D%2242%22%20transform%3D%22rotate%28-8.95985%20121.657%20123.393%29%22%20fill%3D%22%232A2A2A%22%2F%3E%3C%2Fsvg%3E");
++}
++
++@keyframes z1-welcome-logo-rotate {
++	from { transform: rotate(0deg); }
++	to { transform: rotate(360deg); }
++}
++
++@media (prefers-reduced-motion: reduce) {
++	.z1-welcome-logo::before { animation: none; }
 +}
 +
 +.z1-welcome-name {
