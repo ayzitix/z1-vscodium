@@ -8,7 +8,7 @@
  	private showFeaturedWalkthrough = true;
  
  	get editorInput(): GettingStartedInput | undefined {
-@@ -895,10 +896,64 @@
+@@ -895,10 +896,63 @@
  		const gettingStartedPage = $('.gettingStarted', {}, this.categoriesPageScrollbar.getDomNode(), this.stepsSlide);
  		this.container.appendChild(gettingStartedPage);
  
@@ -49,8 +49,7 @@
 +		addCard('folder', 'Open project', () => this.commandService.executeCommand('workbench.action.files.openFolder'));
 +		addCard('repo', 'Clone repo', () => this.commandService.executeCommand('git.clone'));
 +		addCard('terminal', 'Connect via SSH', () => this.connectViaSSH());
-+		const github = addCard('github', 'Connect GitHub', () => this.commandService.executeCommand('workbench.action.manageAccounts'), 'z1-welcome-github');
-+		append(github, $('span.codicon.codicon-link-external.z1-welcome-external'));
++		addCard('info', 'About z1', () => this.commandService.executeCommand('workbench.action.showAboutDialog'), 'z1-welcome-about');
 +
 +		this.container.appendChild(page);
 +	}
@@ -75,7 +74,7 @@
  	private async buildCategoriesSlide(preserveFocus?: boolean) {
 --- a/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
 +++ b/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
-@@ -1159,3 +1159,119 @@
+@@ -1159,3 +1159,113 @@
  	border-color: var(--vscode-checkbox-border) !important;
  }
  
@@ -169,22 +168,16 @@
 +	line-height: 20px;
 +}
 +
-+.z1-welcome-card.z1-welcome-github {
-+	background: #f5f5f5;
-+	color: #141414;
-+	border-color: #f5f5f5;
++.z1-welcome-card.z1-welcome-about {
++	background: #f5f5f5 !important;
++	color: #141414 !important;
++	border-color: #f5f5f5 !important;
 +}
 +
-+.z1-welcome-card.z1-welcome-github:hover {
-+	background: #ffffff;
++.z1-welcome-card.z1-welcome-about:hover {
++	background: #ffffff !important;
 +}
 +
-+.z1-welcome-external {
-+	position: absolute;
-+	top: 12px;
-+	right: 12px;
-+	font-size: 14px !important;
-+}
 +
 +@media (max-width: 640px) {
 +	.z1-welcome-page {

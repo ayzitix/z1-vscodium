@@ -44,7 +44,7 @@ Everything user-visible is `z1`:
 - data directory (`~/.config/z1`)
 - welcome page: `z1`, `Get started with z1`, `z1 Announcements`
 - Cursor-style Welcome screen: z1 brand line and a 2×2 card grid
-  (Open project, Clone repo, Connect via SSH, Connect GitHub)
+  (Open project, Clone repo, Connect via SSH, About z1)
 - empty-editor watermark: the z1 body slowly rotates (32s), the eyes follow
   the mouse cursor (inline SVG, `z1Watermark.ts`),
   rendered at 128px
