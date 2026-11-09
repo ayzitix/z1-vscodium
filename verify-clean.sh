@@ -77,6 +77,12 @@ if grep -q 'z1: hide empty-editor shortcut hints' "${APP}/resources/app/out/vs/w
 else
   bad 'empty-editor shortcut hints are still visible'
 fi
+if grep -q 'z1-welcome-page' "${APP}/resources/app/out/vs/workbench/workbench.desktop.main.css" \
+   && grep -q 'z1-welcome-card' "${APP}/resources/app/out/vs/workbench/workbench.desktop.main.js"; then
+  ok 'Cursor-style z1 welcome screen present'
+else
+  bad 'z1 welcome screen is missing'
+fi
 if cmp -s "${BRAND}/z1-mark-white.svg" "${APP}/resources/app/out/vs/workbench/browser/media/code-icon.svg"; then
   ok 'title bar / tab mark = z1'
 else

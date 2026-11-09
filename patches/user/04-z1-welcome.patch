@@ -1,0 +1,197 @@
+--- a/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts
++++ b/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts
+@@ -171,6 +171,7 @@
+ 	private detailsRenderer: GettingStartedDetailsRenderer;
+ 
+ 	private readonly categoriesSlideDisposables: DisposableStore;
++	private readonly z1WelcomeDisposables = this._register(new DisposableStore());
+ 	private showFeaturedWalkthrough = true;
+ 
+ 	get editorInput(): GettingStartedInput | undefined {
+@@ -895,10 +896,64 @@
+ 		const gettingStartedPage = $('.gettingStarted', {}, this.categoriesPageScrollbar.getDomNode(), this.stepsSlide);
+ 		this.container.appendChild(gettingStartedPage);
+ 
++		this.renderZ1Welcome();
++
+ 		this.categoriesPageScrollbar.scanDomNode();
+ 		this.detailsPageScrollbar.scanDomNode();
+ 
+ 		parent.appendChild(this.container);
++	}
++
++	private renderZ1Welcome(): void {
++		this.z1WelcomeDisposables.clear();
++		this.container.classList.add('z1-welcome');
++		this.container.querySelector('.z1-welcome-page')?.remove();
++
++		const page = $('.z1-welcome-page');
++		const inner = append(page, $('.z1-welcome-inner'));
++
++		const brand = append(inner, $('.z1-welcome-brand'));
++		append(brand, $('.z1-welcome-logo'));
++		append(brand, $('span.z1-welcome-name', {}, 'z1'));
++
++		const grid = append(inner, $('.z1-welcome-grid'));
++		const addCard = (icon: string, label: string, action: () => void, className?: string): HTMLButtonElement => {
++			const card = append(grid, $('button.z1-welcome-card')) as HTMLButtonElement;
++			card.setAttribute('type', 'button');
++			card.setAttribute('aria-label', label);
++			if (className) {
++				card.classList.add(className);
++			}
++			append(card, $('span.codicon.codicon-' + icon));
++			append(card, $('span.z1-welcome-card-label', {}, label));
++			this.z1WelcomeDisposables.add(addDisposableListener(card, 'click', () => void action()));
++			return card;
++		};
++
++		addCard('folder', 'Open project', () => this.commandService.executeCommand('workbench.action.files.openFolder'));
++		addCard('repo', 'Clone repo', () => this.commandService.executeCommand('git.clone'));
++		addCard('terminal', 'Connect via SSH', () => this.connectViaSSH());
++		const github = addCard('github', 'Connect GitHub', () => this.commandService.executeCommand('workbench.action.manageAccounts'), 'z1-welcome-github');
++		append(github, $('span.codicon.codicon-link-external.z1-welcome-external'));
++
++		this.container.appendChild(page);
++	}
++
++	private async connectViaSSH(): Promise<void> {
++		const host = await this.quickInputService.input({
++			prompt: localize('z1.connectSsh.prompt', "Connect to an SSH host"),
++			placeHolder: localize('z1.connectSsh.placeholder', "user@host")
++		});
++		if (!host) {
++			return;
++		}
++
++		try {
++			await this.commandService.executeCommand('workbench.action.terminal.new');
++			await this.commandService.executeCommand('workbench.action.terminal.sendSequence', { text: `ssh ${host}\n` });
++		} catch (error) {
++			this.notificationService.warn(localize('z1.connectSsh.failed', "Could not start SSH session: {0}", String(error)));
++		}
+ 	}
+ 
+ 	private async buildCategoriesSlide(preserveFocus?: boolean) {
+--- a/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
++++ b/src/vs/workbench/contrib/welcomeGettingStarted/browser/media/gettingStarted.css
+@@ -1159,3 +1159,119 @@
+ 	border-color: var(--vscode-checkbox-border) !important;
+ }
+ 
++/* z1 welcome screen */
++.monaco-workbench .part.editor > .content .gettingStartedContainer.z1-welcome > .gettingStarted {
++	display: none !important;
++}
++
++.z1-welcome-page {
++	box-sizing: border-box;
++	height: 100%;
++	overflow: auto;
++	display: flex;
++	align-items: center;
++	justify-content: center;
++	padding: 32px;
++	background: var(--vscode-editor-background);
++	color: var(--vscode-editor-foreground);
++}
++
++.z1-welcome-inner {
++	width: 540px;
++	max-width: 100%;
++}
++
++.z1-welcome-brand {
++	display: flex;
++	align-items: center;
++	gap: 10px;
++	margin-bottom: 28px;
++}
++
++.z1-welcome-logo {
++	width: 34px;
++	height: 34px;
++	flex: 0 0 auto;
++	background-image: url('../../../../browser/media/code-icon.svg');
++	background-size: contain;
++	background-repeat: no-repeat;
++	background-position: center;
++}
++
++.z1-welcome-name {
++	font-size: 28px;
++	font-weight: 700;
++	line-height: 34px;
++	letter-spacing: 0.01em;
++}
++
++.z1-welcome-grid {
++	display: grid;
++	grid-template-columns: repeat(2, minmax(0, 1fr));
++	gap: 12px;
++}
++
++.z1-welcome-card {
++	position: relative;
++	display: flex;
++	flex-direction: column;
++	align-items: flex-start;
++	justify-content: space-between;
++	gap: 10px;
++	min-height: 84px;
++	box-sizing: border-box;
++	padding: 14px;
++	text-align: left;
++	background: color-mix(in srgb, var(--vscode-editor-foreground) 6%, var(--vscode-editor-background));
++	color: var(--vscode-editor-foreground);
++	border: 1px solid var(--vscode-widget-border, var(--vscode-editorWidget-border, #2c2c33));
++	font: inherit;
++	text-align: left;
++	cursor: pointer;
++}
++
++.z1-welcome-card:hover {
++	background: var(--vscode-list-hoverBackground, color-mix(in srgb, var(--vscode-editor-foreground) 10%, var(--vscode-editor-background)));
++}
++
++.z1-welcome-card:focus-visible {
++	outline: 1px solid var(--vscode-focusBorder);
++	outline-offset: -1px;
++}
++
++.z1-welcome-card .codicon {
++	font-size: 22px;
++	line-height: 22px;
++}
++
++.z1-welcome-card-label {
++	font-size: 14px;
++	line-height: 20px;
++}
++
++.z1-welcome-card.z1-welcome-github {
++	background: #f5f5f5;
++	color: #141414;
++	border-color: #f5f5f5;
++}
++
++.z1-welcome-card.z1-welcome-github:hover {
++	background: #ffffff;
++}
++
++.z1-welcome-external {
++	position: absolute;
++	top: 12px;
++	right: 12px;
++	font-size: 14px !important;
++}
++
++@media (max-width: 640px) {
++	.z1-welcome-page {
++		padding: 24px;
++	}
++
++	.z1-welcome-grid {
++		grid-template-columns: 1fr;
++	}
++}
